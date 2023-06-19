@@ -15,7 +15,7 @@ This is a sample Java / Maven / Spring Boot (version 2.7.12) application that ca
 
 ## How to Run
 
-This application is packaged as a jar which has Tomcat embedded. No Tomcat or JBoss installation is necessary. You run it using the ```java -jar``` command.
+This application is packaged as a jar that has Tomcat embedded. No Tomcat or JBoss installation is necessary. You run it using the ```java -jar``` command.
 
 * Clone this repository
 * Make sure you are using JDK 11 and Maven 3.x
@@ -97,7 +97,7 @@ RESPONSE: HTTP 200
 ### User information
 
 ```
-GET http://localhost:8080/user/me
+GET http://localhost:8080/user/{uuid}
 Accept: application/json
 Content-Type: application/json
 Header: Authorization Bearer ...
@@ -107,9 +107,9 @@ RESPONSE: HTTP 200
 
 ### To view your H2 in-memory database
 
-The 'test' profile runs on H2 in-memory database. To view and query the database you can browse to http://localhost:8080/h2-console. Default username is 'sa' with a blank password. Make sure you disable this in your production profiles. For more, see https://goo.gl/U8m62X
+The 'test' profile runs on H2 in-memory database. To view and query the database you can browse to http://localhost:8080/h2-console. The default username is 'sa' with a blank password. Make sure you disable this in your production profiles. For more, see https://goo.gl/U8m62X
 
-It is recommended to create a database file in the user's home, in this case with the name of test.mv.db
+It is recommended to create a database file in the user's home, in this case with the name test.mv.db
 
 ![Alt text](h2-console.png?raw=true "H2 Console")
 
@@ -119,12 +119,9 @@ Click on the connect button and the following will be displayed:
 
 Here you can execute any select instruction on the database tables to visualize the data.
 
-Below are some basic sequence and flowcharts to understand user registration.
+Below are some basic sequences and flowcharts to understand user registration.
 
 ![Alt text](flow.png?raw=true "flowchart")
 
 ![Alt text](sequence.png?raw=true "sequence diagram")
 
-## Copyright
-
-Released under the Apache License 2.0. See the [LICENSE](https://github.com/codecentric/springboot-sample-app/blob/master/LICENSE) file.
