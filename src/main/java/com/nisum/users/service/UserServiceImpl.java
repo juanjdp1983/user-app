@@ -9,7 +9,6 @@ import com.nisum.users.model.response.UserCreatedResponse;
 import com.nisum.users.model.response.UserResponse;
 import com.nisum.users.repository.UserRepository;
 import com.nisum.users.security.JwtUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,19 +17,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl {
     private UserRepository userRepository;
 
     private AuthenticationManager authenticationManager;
-
-    private String passwordPattern;
-
-    private String mailPattern;
 
     private PasswordEncoder encoder;
 
@@ -39,15 +36,11 @@ public class UserServiceImpl {
     public UserServiceImpl(UserRepository userRepository,
                            AuthenticationManager authenticationManager,
                            PasswordEncoder encoder,
-                           JwtUtils jwtUtils,
-                           @Value("${app.passwordPattern.regexp}") String passwordPattern,
-                           @Value("${app.mailPattern.regexp}") String mailPattern) {
+                           JwtUtils jwtUtils) {
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.encoder = encoder;
         this.jwtUtils = jwtUtils;
-        this.passwordPattern = passwordPattern;
-        this.mailPattern = mailPattern;
     }
 
     /**
@@ -63,14 +56,6 @@ public class UserServiceImpl {
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             throw new DataValidationException("Error: Email is in use.");
-        }
-
-        if (!validatePassword(signUpRequest.getPassword())) {
-            throw new DataValidationException("Error: Password must contain upper and lower case letters, numbers and at least one special character.");
-        }
-
-        if (!validateMail(signUpRequest.getEmail())) {
-            throw new DataValidationException("Error: invalid format for mail, e.g.: mail@dominio.com");
         }
 
         Set<Phone> phoneSet = new HashSet<>();
@@ -108,30 +93,6 @@ public class UserServiceImpl {
     }
 
     /**
-     * validates the password from a regular expression
-     *
-     * @param password
-     * @return
-     */
-    private Boolean validatePassword(String password) {
-        Pattern p = Pattern.compile(this.passwordPattern);
-        Matcher m = p.matcher(password);
-        return m.matches();
-    }
-
-    /**
-     * validates the mail from a regular expression
-     *
-     * @param mail
-     * @return
-     */
-    private Boolean validateMail(String mail) {
-        Pattern p = Pattern.compile(this.mailPattern);
-        Matcher m = p.matcher(mail);
-        return m.matches();
-    }
-
-    /**
      * Get user for me method
      *
      * @param uuid
@@ -158,8 +119,6 @@ public class UserServiceImpl {
                 .authenticate(new UsernamePasswordAuthenticationToken(name, pass));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         return jwtUtils.generateTokenFromUsername(name);
 
